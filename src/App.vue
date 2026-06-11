@@ -5,88 +5,120 @@
       <p class="subtitle">專為大學生設計的懶人理財術</p>
     </header>
 
-    <section class="intro-section">
-      <h2>為什麼你不需要天天記流水帳？</h2>
-      <p>每次記帳都堅持不到三天？看到密密麻麻的數字就頭痛？別擔心！這個省錢法不需要你每天死板地記帳，只要在每個月拿到打工薪水或零用錢時，直接把錢分進三個不同的帳戶，接下來就能放鬆、安心地花錢！</p>
-    </section>
+    <nav class="main-nav">
+      <button 
+        @click="currentTab = 'intro'" 
+        :class="['nav-btn', { active: currentTab === 'intro' }]"
+      >
+        📖 核心概念
+      </button>
+      <button 
+        @click="currentTab = 'calculator'" 
+        :class="['nav-btn', { active: currentTab === 'calculator' }]"
+      >
+        💰 分配計算機
+      </button>
+      <button 
+        @click="currentTab = 'quiz'" 
+        :class="['nav-btn', { active: currentTab === 'quiz' }]"
+      >
+        📝 隨堂測驗
+      </button>
+    </nav>
 
-    <section class="calculator-section">
-      <h2>💰 三帳戶金額分配計算機</h2>
-      <p class="calc-hint">輸入你每個月的打工薪水或零用錢，看一秒怎麼分配：</p>
-      
-      <div class="input-group">
-        <span class="currency-label">$</span>
-        <input 
-          v-model.number="monthlyIncome" 
-          type="number" 
-          placeholder="請輸入金額" 
-          class="money-input"
-        />
-        <span class="currency-unit">元</span>
-      </div>
+    <main class="main-content">
+      <div v-if="currentTab === 'intro'" class="tab-content">
+        <section class="intro-section">
+          <h2>為什麼你不需要天天記流水帳？</h2>
+          <p>每次記帳都堅持不到三天？看到密密麻麻的數字就頭痛？別擔心！這個省錢法不需要你每天死板地記帳，只要在每個月拿到打工薪水或零用錢時，直接把錢分進三個不同的帳戶，接下來就能放鬆、安心地花錢！</p>
+        </section>
 
-      <div v-if="monthlyIncome > 0" class="calc-results">
-        <div class="result-item">
-          <span class="result-label">生活費帳戶 (60%)：</span>
-          <span class="result-amount">${{ livingExpense }} 元</span>
-        </div>
-        <div class="result-item">
-          <span class="result-label">儲蓄帳戶 (20%)：</span>
-          <span class="result-amount">${{ savings }} 元</span>
-        </div>
-        <div class="result-item">
-          <span class="result-label">娛樂帳戶 (20%)：</span>
-          <span class="result-amount">${{ entertainment }} 元</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="accounts-section">
-      <h2>核心三大帳戶規劃</h2>
-      <div class="account-card-group">
-        <div 
-          v-for="(account, index) in accounts" 
-          :key="index" 
-          class="account-card"
-        >
-          <h3>{{ account.name }}</h3>
-          <div class="percentage-tag">{{ account.percentage }}</div>
-          <p class="description">{{ account.desc }}</p>
-          <div class="example-box">
-            <strong>適合項目：</strong>{{ account.examples }}
+        <section class="accounts-section">
+          <h2>核心三大帳戶規劃</h2>
+          <div class="account-card-group">
+            <div 
+              v-for="(account, index) in accounts" 
+              :key="index" 
+              class="account-card"
+            >
+              <h3>{{ account.name }}</h3>
+              <div class="percentage-tag">{{ account.percentage }}</div>
+              <p class="description">{{ account.desc }}</p>
+              <div class="example-box">
+                <strong>適合項目：</strong>{{ account.examples }}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="quiz-section">
-      <h2>📝 理財觀念隨堂小測驗</h2>
-      <p class="quiz-question">Q: 當下個月拿到打工薪水時，第一步應該做什麼？</p>
-      
-      <div class="quiz-options">
-        <label class="option-label">
-          <input type="radio" v-model="selectedAnswer" value="A" />
-          A) 先拿去買一直想買的衣服，剩下的再存起來
-        </label>
-        <label class="option-label">
-          <input type="radio" v-model="selectedAnswer" value="B" />
-          B) 立刻按照 6:2:2 比例把錢分進三個帳戶
-        </label>
-        <label class="option-label">
-          <input type="radio" v-model="selectedAnswer" value="C" />
-          C) 全部放定存，這個月不吃不喝
-        </label>
+        </section>
       </div>
 
-      <div v-if="selectedAnswer" class="quiz-feedback">
-        <div v-if="selectedAnswer === 'B'" class="feedback-success">
-          🎉 答對了！先分配再消費，才是無痛省錢的核心喔！
-        </div>
-        <div v-else class="feedback-error">
-          ❌ 再想想看！這樣可能很快就會把錢花光，或是太痛苦而放棄喔。
-        </div>
+      <div v-if="currentTab === 'calculator'" class="tab-content">
+        <section class="calculator-section">
+          <h2>💰 三帳戶金額分配計算機</h2>
+          <p class="calc-hint">輸入你每個月的打工薪水或零用錢，看一秒怎麼分配：</p>
+          
+          <div class="input-group">
+            <span class="currency-label">$</span>
+            <input 
+              v-model.number="monthlyIncome" 
+              type="number" 
+              placeholder="請輸入金額" 
+              class="money-input"
+            />
+            <span class="currency-unit">元</span>
+          </div>
+
+          <div v-if="monthlyIncome > 0" class="calc-results">
+            <div class="result-item">
+              <span class="result-label">生活費帳戶 (60%)：</span>
+              <span class="result-amount">${{ livingExpense }} 元</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">儲蓄帳戶 (20%)：</span>
+              <span class="result-amount">${{ savings }} 元</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">娛樂帳戶 (20%)：</span>
+              <span class="result-amount">${{ entertainment }} 元</span>
+            </div>
+          </div>
+          <div v-else class="empty-state">
+            請在上方輸入金額，計算機才會開始幫你分配喔！
+          </div>
+        </section>
       </div>
-    </section>
+
+      <div v-if="currentTab === 'quiz'" class="tab-content">
+        <section class="quiz-section">
+          <h2>📝 理財觀念隨堂小測驗</h2>
+          <p class="quiz-question">Q: 當下個月拿到打工薪水時，第一步應該做什麼？</p>
+          
+          <div class="quiz-options">
+            <label class="option-label">
+              <input type="radio" v-model="selectedAnswer" value="A" />
+              A) 先拿去買一直想買的衣服，剩下的再存起來
+            </label>
+            <label class="option-label">
+              <input type="radio" v-model="selectedAnswer" value="B" />
+              B) 立刻按照 6:2:2 比例把錢分進三個帳戶
+            </label>
+            <label class="option-label">
+              <input type="radio" v-model="selectedAnswer" value="C" />
+              C) 全部放定存，這個月不吃不喝
+            </label>
+          </div>
+
+          <div v-if="selectedAnswer" class="quiz-feedback">
+            <div v-if="selectedAnswer === 'B'" class="feedback-success">
+              🎉 答對了！先分配再消費，才是無痛省錢的核心喔！
+            </div>
+            <div v-else class="feedback-error">
+              ❌ 再想想看！這樣可能很快就會把錢花光，或是太痛苦而放棄喔。
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
 
     <footer class="main-footer">
       <p>Vue.js 個人教學網站期末專案</p>
@@ -105,7 +137,10 @@ interface Account {
   examples: string
 }
 
-// 計算機綁定的輸入金額
+// 控制目前切換到哪一個畫面 (預設在 intro 核心概念)
+const currentTab = ref<string>('intro')
+
+// 計算機綁定的輸入金額 (v-model 雙向資料綁定)
 const monthlyIncome = ref<number>(0)
 
 // 利用 computed 自動即時計算分配金額
@@ -113,7 +148,7 @@ const livingExpense = computed(() => Math.round(monthlyIncome.value * 0.6))
 const savings = computed(() => Math.round(monthlyIncome.value * 0.2))
 const entertainment = computed(() => Math.round(monthlyIncome.value * 0.2))
 
-// 測驗綁定的選擇答案
+// 測驗表單綁定的選擇答案
 const selectedAnswer = ref<string>('')
 
 // 三個帳戶的資料清單
@@ -155,7 +190,7 @@ const accounts = ref<Account[]>([
   padding: 40px 0;
   background-color: #ffe3e8;
   border-radius: 12px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .main-header h1 {
@@ -169,6 +204,38 @@ const accounts = ref<Account[]>([
   color: #a6727a;
 }
 
+/* 導覽列樣式 */
+.main-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.nav-btn {
+  background-color: #ffffff;
+  color: #a6727a;
+  border: 2px solid #ffe3e8;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  background-color: #fff0f2;
+  border-color: #d85a70;
+}
+
+.nav-btn.active {
+  background-color: #d85a70;
+  color: #ffffff;
+  border-color: #d85a70;
+}
+
+/* 內容區塊主樣式 */
 .intro-section, .calculator-section, .accounts-section, .quiz-section {
   background-color: #ffffff;
   padding: 20px;
@@ -236,6 +303,15 @@ h2 {
   color: #d85a70;
 }
 
+.empty-state {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  background-color: #fcfcfc;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+}
+
 /* 帳戶卡片樣式 */
 .account-card-group {
   display: flex;
@@ -279,7 +355,7 @@ h2 {
   font-size: 14px;
 }
 
-/* 測驗樣式 */
+/* 測驗表單樣式 */
 .quiz-question {
   font-weight: bold;
   margin-bottom: 15px;
