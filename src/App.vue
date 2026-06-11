@@ -147,6 +147,42 @@
             </div>
           </div>
 
+          <div class="quiz-item">
+            <p class="quiz-question">Q4. 為了防止自己亂花錢，「儲蓄帳戶」的錢最好怎麼處理？</p>
+            <div class="quiz-options">
+              <label class="option-label" @click.stop="playClickSound">
+                <input type="radio" v-model="answers.q4" value="A" :disabled="quizSubmitted" />
+                A) 放進最難提款的銀行，甚至把提款卡藏起來
+              </label>
+              <label class="option-label" @click.stop="playClickSound">
+                <input type="radio" v-model="answers.q4" value="B" :disabled="quizSubmitted" />
+                B) 換成現金放在每天帶出門的錢包裡
+              </label>
+              <label class="option-label" @click.stop="playClickSound">
+                <input type="radio" v-model="answers.q4" value="C" :disabled="quizSubmitted" />
+                C) 存進隨時可以用手機 App 一鍵轉帳花掉的網銀帳戶
+              </label>
+            </div>
+          </div>
+
+          <div class="quiz-item">
+            <p class="quiz-question">Q5. 這個月老闆突然發了一筆預期外的打工特別獎金，該怎麼運用最符合核心概念？</p>
+            <div class="quiz-options">
+              <label class="option-label" @click.stop="playClickSound">
+                <input type="radio" v-model="answers.q5" value="A" :disabled="quizSubmitted" />
+                A) 既然是多賺的，就當作沒這回事，全部拿去網購花光
+              </label>
+              <label class="option-label" @click.stop="playClickSound">
+                <input type="radio" v-model="answers.q5" value="B" :disabled="quizSubmitted" />
+                B) 一樣保持好習慣，立刻按照 6:2:2 的帳戶比例存入與分配
+              </label>
+              <label class="option-label" @click.stop="playClickSound">
+                <input type="radio" v-model="answers.q5" value="C" :disabled="quizSubmitted" />
+                C) 覺得自己太有錢了，下個月都不用打工了
+              </label>
+            </div>
+          </div>
+
           <div class="quiz-actions">
             <button 
               v-if="!quizSubmitted" 
@@ -170,13 +206,13 @@
             <div class="score-display">得分：<span class="score-num">{{ score }}</span> / 100 分</div>
             
             <div v-if="score === 100" class="feedback-box high">
-              🎉 太厲害了！你已經完全掌握無痛省錢的心法，下個月就開始實踐吧！
+              🎉 太厲害了！你拿到了滿分！已經完全掌握無痛省錢的心法，下個月就開始實踐吧！
             </div>
-            <div v-else-if="score === 66" class="feedback-box mid">
-              👍 很不錯喔！基本的觀念都有了，稍微注意一下卡住的地方就能做得更好。
+            <div v-else-if="score >= 60" class="feedback-box mid">
+              👍 很不錯喔！拿到分頁及格分數了，基本的觀念都有了，稍微注意一下錯題就能做得更好。
             </div>
             <div v-else class="feedback-box low">
-              💡 沒關係！理財是慢慢累積的，重新回「核心概念」分頁瞧瞧細節吧！
+              💡 哎呀，低於 50 分了！沒關係，理財是慢慢累積的，重新回「核心概念」分頁瞧瞧細節吧！
             </div>
           </div>
         </section>
@@ -217,19 +253,21 @@ const livingExpense = computed(() => Math.round(monthlyIncome.value * 0.6))
 const savings = computed(() => Math.round(monthlyIncome.value * 0.2))
 const entertainment = computed(() => Math.round(monthlyIncome.value * 0.2))
 
-// 測驗表單資料綁定
+// 測驗表單資料綁定 (5題)
 const answers = reactive({
   q1: '',
   q2: '',
-  q3: ''
+  q3: '',
+  q4: '',
+  q5: ''
 })
 
 const quizSubmitted = ref<boolean>(false)
 const score = ref<number>(0)
 
-// 檢查是否所有題目都寫完了
+// 檢查是否所有 5 題都寫完了
 const isQuizComplete = computed(() => {
-  return answers.q1 !== '' && answers.q2 !== '' && answers.q3 !== ''
+  return answers.q1 !== '' && answers.q2 !== '' && answers.q3 !== '' && answers.q4 !== '' && answers.q5 !== ''
 })
 
 // --- 音效動態合成函式 ---
@@ -243,7 +281,7 @@ const playClickSound = () => {
     gain.connect(audioCtx.destination)
 
     osc.type = 'sine'
-    osc.frequency.setValueAtTime(400, audioCtx.currentTime) // 頻率
+    osc.frequency.setValueAtTime(400, audioCtx.currentTime)
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime)
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05)
 
@@ -260,7 +298,6 @@ const playCheerSound = () => {
     const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
     const now = audioCtx.currentTime
 
-    // 模擬三個快速重疊的上升音階，製造歡呼感
     const tones = [523.25, 659.25, 783.99, 1046.50] // C5, E5, G5, C6
     tones.forEach((freq, index) => {
       const osc = audioCtx.createOscillator()
@@ -293,8 +330,8 @@ const playSadSound = () => {
     gain.connect(audioCtx.destination)
 
     osc.type = 'sawtooth'
-    osc.frequency.setValueAtTime(220, audioCtx.currentTime) // 低音 A3
-    osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.4) // 往下跌到 A2
+    osc.frequency.setValueAtTime(220, audioCtx.currentTime) 
+    osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.4) 
     
     gain.gain.setValueAtTime(0.12, audioCtx.currentTime)
     gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.4)
@@ -333,20 +370,23 @@ const playNormalSuccessSound = () => {
 const submitQuiz = () => {
   playClickSound()
   let currentScore = 0
-  if (answers.q1 === 'B') currentScore += 34
-  if (answers.q2 === 'A') currentScore += 33
-  if (answers.q3 === 'C') currentScore += 33
+  // 每題 20 分
+  if (answers.q1 === 'B') currentScore += 20
+  if (answers.q2 === 'A') currentScore += 20
+  if (answers.q3 === 'C') currentScore += 20
+  if (answers.q4 === 'A') currentScore += 20
+  if (answers.q5 === 'B') currentScore += 20
   
   score.value = currentScore
   quizSubmitted.value = true
 
   // 根據分數播放指定音效
   if (score.value === 100) {
-    playCheerSound() // 滿分歡呼
+    playCheerSound() // 滿分歡呼聲
   } else if (score.value < 50) {
     playSadSound()   // 低於50分不開心
   } else {
-    playNormalSuccessSound() // 其他及格分數
+    playNormalSuccessSound() // 60~80分提示音
   }
 }
 
@@ -356,6 +396,8 @@ const resetQuiz = () => {
   answers.q1 = ''
   answers.q2 = ''
   answers.q3 = ''
+  answers.q4 = ''
+  answers.q5 = ''
   score.value = 0
   quizSubmitted.value = false
 }
@@ -384,53 +426,53 @@ const accounts = ref<Account[]>([
 </script>
 
 <style scoped>
-/* 整體粉色系與大字體樣式設定 */
+/* 全面放大 3pt（約增加 4px 左右）後的樣式設定 */
 .portfolio-container {
   font-family: sans-serif;
-  max-width: 850px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 28px;
   color: #4a4a4a;
   background-color: #fffafb;
-  font-size: 18px; /* 全面放大基本內文 */
+  font-size: 22px; /* 內文字體全面加大 */
 }
 
 .main-header {
   text-align: center;
-  padding: 45px 0;
+  padding: 50px 0;
   background-color: #ffe3e8;
   border-radius: 12px;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .main-header h1 {
   color: #d85a70;
-  margin: 0 0 12px 0;
-  font-size: 30px; /* 放大標題 */
+  margin: 0 0 14px 0;
+  font-size: 34px; /* 標題加大 */
 }
 
 .subtitle {
   margin: 0;
   color: #a6727a;
-  font-size: 20px;
+  font-size: 24px;
 }
 
-/* 導覽列大按鈕樣式 */
+/* 導覽列按鈕 */
 .main-nav {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 30px;
+  gap: 15px;
+  margin-bottom: 35px;
 }
 
 .nav-btn {
   background-color: #ffffff;
   color: #a6727a;
   border: 2px solid #ffe3e8;
-  padding: 12px 24px;
-  border-radius: 25px;
+  padding: 14px 28px;
+  border-radius: 30px;
   cursor: pointer;
-  font-size: 18px; /* 放大按鈕字體 */
+  font-size: 22px; /* 按鈕字體加大 */
   font-weight: bold;
   transition: all 0.2s;
 }
@@ -449,22 +491,22 @@ const accounts = ref<Account[]>([
 /* 內容區區塊樣式 */
 .intro-section, .calculator-section, .accounts-section, .quiz-section {
   background-color: #ffffff;
-  padding: 25px;
+  padding: 30px;
   border-radius: 12px;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 10px rgba(216, 90, 112, 0.06);
+  margin-bottom: 35px;
+  box-shadow: 0 3px 12px rgba(216, 90, 112, 0.06);
 }
 
 h2 {
   color: #d85a70;
-  border-left: 5px solid #ffe3e8;
-  padding-left: 12px;
+  border-left: 6px solid #ffe3e8;
+  padding-left: 14px;
   margin-top: 0;
-  font-size: 24px; /* 放大區塊標題 */
+  font-size: 28px; /* 區塊標題加大 */
 }
 
 p {
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 /* 切換淡入動畫 */
@@ -477,33 +519,33 @@ p {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* 計算機大樣式 */
+/* 計算機樣式 */
 .calc-hint {
   color: #666;
-  font-size: 16px;
-  margin-bottom: 18px;
+  font-size: 20px;
+  margin-bottom: 20px;
 }
 
 .input-group {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 25px;
+  gap: 14px;
+  margin-bottom: 30px;
 }
 
 .currency-label, .currency-unit {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
 }
 
 .money-input {
   border: 2px solid #ffe3e8;
   border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 18px;
+  padding: 12px 16px;
+  font-size: 22px;
   color: #4a4a4a;
   outline: none;
-  width: 180px;
+  width: 220px;
 }
 
 .money-input:focus {
@@ -513,14 +555,14 @@ p {
 .calc-results {
   background-color: #fff9fa;
   border: 1px solid #ffe3e8;
-  padding: 18px;
+  padding: 22px;
   border-radius: 8px;
 }
 
 .result-item {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px dashed #ffe3e8;
 }
 
@@ -529,75 +571,75 @@ p {
 }
 
 .result-label {
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .result-amount {
   font-weight: bold;
   color: #d85a70;
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .empty-state {
   text-align: center;
   color: #999;
-  padding: 25px;
+  padding: 30px;
   background-color: #fcfcfc;
   border: 1px dashed #ddd;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 20px;
 }
 
-/* 帳戶大卡片樣式 */
+/* 帳戶卡片樣式 */
 .account-card-group {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
 }
 
 .account-card {
   border: 1px solid #ffe3e8;
   border-radius: 8px;
-  padding: 20px;
+  padding: 24px;
   background-color: #fffcfd;
 }
 
 .account-card h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 10px 0;
   color: #4a4a4a;
-  font-size: 21px;
+  font-size: 25px;
 }
 
 .percentage-tag {
   display: inline-block;
   background-color: #ffe3e8;
   color: #d85a70;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: bold;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .example-box {
   background-color: #f7f7f7;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 6px;
-  font-size: 16px;
-  margin-top: 10px;
+  font-size: 20px;
+  margin-top: 12px;
 }
 
-/* 測驗加大樣式 */
+/* 測驗區塊樣式 */
 .quiz-intro {
   color: #666;
-  font-size: 16px;
-  margin-bottom: 25px;
+  font-size: 20px;
+  margin-bottom: 30px;
 }
 
 .quiz-item {
   border-bottom: 1px solid #f5f5f5;
-  padding-bottom: 20px;
-  margin-bottom: 25px;
+  padding-bottom: 24px;
+  margin-bottom: 30px;
 }
 
 .quiz-item:last-of-type {
@@ -606,25 +648,25 @@ p {
 
 .quiz-question {
   font-weight: bold;
-  margin-bottom: 15px;
-  font-size: 19px;
+  margin-bottom: 18px;
+  font-size: 23px;
 }
 
 .quiz-options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
 }
 
 .option-label {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   cursor: pointer;
-  padding: 10px;
+  padding: 12px;
   border-radius: 6px;
   transition: background-color 0.2s;
-  font-size: 17px;
+  font-size: 21px;
 }
 
 .option-label:hover {
@@ -632,24 +674,24 @@ p {
 }
 
 .option-label input[type="radio"] {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   cursor: pointer;
 }
 
 .quiz-actions {
   text-align: center;
-  margin: 30px 0 15px 0;
+  margin: 35px 0 20px 0;
 }
 
 .action-btn {
   background-color: #d85a70;
   color: white;
   border: none;
-  padding: 14px 30px;
-  border-radius: 28px;
+  padding: 16px 36px;
+  border-radius: 32px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: bold;
   transition: background-color 0.2s;
 }
@@ -673,33 +715,33 @@ p {
   background-color: #fff0f2;
 }
 
-/* 測驗分數大字體回饋 */
+/* 測驗回饋樣式 */
 .quiz-results-box {
-  margin-top: 30px;
+  margin-top: 35px;
   border: 2px solid #ffe3e8;
-  padding: 25px;
+  padding: 30px;
   border-radius: 10px;
   background-color: #fffcfd;
   text-align: center;
 }
 
 .score-display {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: bold;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .score-num {
-  font-size: 42px;
+  font-size: 48px;
   color: #d85a70;
 }
 
 .feedback-box {
-  padding: 15px;
+  padding: 18px;
   border-radius: 6px;
   font-weight: bold;
-  font-size: 17px;
-  line-height: 1.5;
+  font-size: 21px;
+  line-height: 1.6;
 }
 
 .feedback-box.high {
@@ -722,8 +764,8 @@ p {
 
 .main-footer {
   text-align: center;
-  padding: 25px 0;
+  padding: 30px 0;
   color: #aaa;
-  font-size: 14px;
+  font-size: 16px;
 }
 </style>
