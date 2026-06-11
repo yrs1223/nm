@@ -22,12 +22,12 @@
         @click="currentTab = 'quiz'" 
         :class="['nav-btn', { active: currentTab === 'quiz' }]"
       >
-        📝 隨堂測驗
+        📝 挑戰隨堂測驗
       </button>
     </nav>
 
     <main class="main-content">
-      <div v-if="currentTab === 'intro'" class="tab-content">
+      <div v-if="currentTab === 'intro'" class="tab-content animate-fade">
         <section class="intro-section">
           <h2>為什麼你不需要天天記流水帳？</h2>
           <p>每次記帳都堅持不到三天？看到密密麻麻的數字就頭痛？別擔心！這個省錢法不需要你每天死板地記帳，只要在每個月拿到打工薪水或零用錢時，直接把錢分進三個不同的帳戶，接下來就能放鬆、安心地花錢！</p>
@@ -52,7 +52,7 @@
         </section>
       </div>
 
-      <div v-if="currentTab === 'calculator'" class="tab-content">
+      <div v-if="currentTab === 'calculator'" class="tab-content animate-fade">
         <section class="calculator-section">
           <h2>💰 三帳戶金額分配計算機</h2>
           <p class="calc-hint">輸入你每個月的打工薪水或零用錢，看一秒怎麼分配：</p>
@@ -88,32 +88,95 @@
         </section>
       </div>
 
-      <div v-if="currentTab === 'quiz'" class="tab-content">
+      <div v-if="currentTab === 'quiz'" class="tab-content animate-fade">
         <section class="quiz-section">
-          <h2>📝 理財觀念隨堂小測驗</h2>
-          <p class="quiz-question">Q: 當下個月拿到打工薪水時，第一步應該做什麼？</p>
-          
-          <div class="quiz-options">
-            <label class="option-label">
-              <input type="radio" v-model="selectedAnswer" value="A" />
-              A) 先拿去買一直想買的衣服，剩下的再存起來
-            </label>
-            <label class="option-label">
-              <input type="radio" v-model="selectedAnswer" value="B" />
-              B) 立刻按照 6:2:2 比例把錢分進三個帳戶
-            </label>
-            <label class="option-label">
-              <input type="radio" v-model="selectedAnswer" value="C" />
-              C) 全部放定存，這個月不吃不喝
-            </label>
+          <h2>📝 理財觀念隨堂大挑戰</h2>
+          <p class="quiz-intro">動動手指選選看，測測看你的無痛理財觀念及格了嗎！</p>
+
+          <div class="quiz-item">
+            <p class="quiz-question">Q1. 當下個月拿到打工薪水時，第一步應該做什麼？</p>
+            <div class="quiz-options">
+              <label class="option-label">
+                <input type="radio" v-model="answers.q1" value="A" :disabled="quizSubmitted" />
+                A) 先拿去買一直想買的衣服，剩下的再存起來
+              </label>
+              <label class="option-label">
+                <input type="radio" v-model="answers.q1" value="B" :disabled="quizSubmitted" />
+                B) 立刻按照 6:2:2 比例把錢分進三個帳戶
+              </label>
+              <label class="option-label">
+                <input type="radio" v-model="answers.q1" value="C" :disabled="quizSubmitted" />
+                C) 全部放定存，這個月不吃不喝
+              </label>
+            </div>
           </div>
 
-          <div v-if="selectedAnswer" class="quiz-feedback">
-            <div v-if="selectedAnswer === 'B'" class="feedback-success">
-              🎉 答對了！先分配再消費，才是無痛省錢的核心喔！
+          <div class="quiz-item">
+            <p class="quiz-question">Q2. 如果「生活費帳戶」的錢在月底前三天不小心花光了，該怎麼辦？</p>
+            <div class="quiz-options">
+              <label class="option-label">
+                <input type="radio" v-model="answers.q2" value="A" :disabled="quizSubmitted" />
+                A) 縮衣節食，強迫自己熬過這三天，嚴守預算
+              </label>
+              <label class="option-label">
+                <input type="radio" v-model="answers.q2" value="B" :disabled="quizSubmitted" />
+                B) 直接從「儲蓄帳戶」轉錢出來花
+              </label>
+              <label class="option-label">
+                <input type="radio" v-model="answers.q2" value="C" :disabled="quizSubmitted" />
+                C) 放棄這個月的省錢計畫，下個月再說
+              </label>
             </div>
-            <div v-else class="feedback-error">
-              ❌ 再想想看！這樣可能很快就會把錢花光，或是太痛苦而放棄喔。
+          </div>
+
+          <div class="quiz-item">
+            <p class="quiz-question">Q3. 買衣服、和朋友聚餐或是找代購買好物，應該用哪一個帳戶的錢付帳？</p>
+            <div class="quiz-options">
+              <label class="option-label">
+                <input type="radio" v-model="answers.q3" value="A" :disabled="quizSubmitted" />
+                A) 生活費帳戶
+              </label>
+              <label class="option-label">
+                <input type="radio" v-model="answers.q3" value="B" :disabled="quizSubmitted" />
+                B) 儲蓄帳戶
+              </label>
+              <label class="option-label">
+                <input type="radio" v-model="answers.q3" value="C" :disabled="quizSubmitted" />
+                C) 娛樂帳戶
+              </label>
+            </div>
+          </div>
+
+          <div class="quiz-actions">
+            <button 
+              v-if="!quizSubmitted" 
+              @click="submitQuiz" 
+              :disabled="!isQuizComplete" 
+              class="action-btn"
+            >
+              提交答案看分數
+            </button>
+            <button 
+              v-else 
+              @click="resetQuiz" 
+              class="action-btn secondary"
+            >
+              重新挑戰
+            </button>
+          </div>
+
+          <div v-if="quizSubmitted" class="quiz-results-box">
+            <h3>🎯 你的測驗結果</h3>
+            <div class="score-display">得分：<span class="score-num">{{ score }}</span> / 100 分</div>
+            
+            <div v-if="score === 100" class="feedback-box high">
+              🎉 太厲害了！你已經完全掌握無痛省錢的心法，下個月就開始實踐吧！
+            </div>
+            <div v-else-if="score === 66" class="feedback-box mid">
+              👍 很不錯喔！基本的觀念都有了，稍微注意一下卡住的地方就能做得更好。
+            </div>
+            <div v-else class="feedback-box low">
+              💡 沒關係！理財是慢慢累積的，重新回「核心概念」分頁瞧瞧細節吧！
             </div>
           </div>
         </section>
@@ -127,7 +190,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 
 // 定義帳戶資料的資料結構
 interface Account {
@@ -137,7 +200,7 @@ interface Account {
   examples: string
 }
 
-// 控制目前切換到哪一個畫面 (預設在 intro 核心概念)
+// 控制目前切換到哪一個畫面
 const currentTab = ref<string>('intro')
 
 // 計算機綁定的輸入金額 (v-model 雙向資料綁定)
@@ -148,8 +211,40 @@ const livingExpense = computed(() => Math.round(monthlyIncome.value * 0.6))
 const savings = computed(() => Math.round(monthlyIncome.value * 0.2))
 const entertainment = computed(() => Math.round(monthlyIncome.value * 0.2))
 
-// 測驗表單綁定的選擇答案
-const selectedAnswer = ref<string>('')
+// 測驗表單資料綁定 (使用 reactive 管理多題答案)
+const answers = reactive({
+  q1: '',
+  q2: '',
+  q3: ''
+})
+
+const quizSubmitted = ref<boolean>(false)
+const score = ref<number>(0)
+
+// 檢查是否所有題目都寫完了
+const isQuizComplete = computed(() => {
+  return answers.q1 !== '' && answers.q2 !== '' && answers.q3 !== ''
+})
+
+// 計算分數的函式
+const submitQuiz = () => {
+  let currentScore = 0
+  if (answers.q1 === 'B') currentScore += 34
+  if (answers.q2 === 'A') currentScore += 33
+  if (answers.q3 === 'C') currentScore += 33
+  
+  score.value = currentScore
+  quizSubmitted.value = true
+}
+
+// 重設測驗的函式
+const resetQuiz = () => {
+  answers.q1 = ''
+  answers.q2 = ''
+  answers.q3 = ''
+  score.value = 0
+  quizSubmitted.value = false
+}
 
 // 三個帳戶的資料清單
 const accounts = ref<Account[]>([
@@ -250,6 +345,16 @@ h2 {
   padding-left: 10px;
   margin-top: 0;
   font-size: 20px;
+}
+
+/* 簡單的切換淡入動畫 */
+.animate-fade {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* 計算機樣式 */
@@ -355,17 +460,32 @@ h2 {
   font-size: 14px;
 }
 
-/* 測驗表單樣式 */
+/* 測驗區塊擴充樣式 */
+.quiz-intro {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.quiz-item {
+  border-bottom: 1px solid #f5f5f5;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.quiz-item:last-of-type {
+  border-bottom: none;
+}
+
 .quiz-question {
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .quiz-options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 10px;
 }
 
 .option-label {
@@ -373,26 +493,91 @@ h2 {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-.quiz-feedback {
-  padding: 12px;
-  border-radius: 8px;
+.option-label:hover {
+  background-color: #fff0f2;
+}
+
+.quiz-actions {
+  text-align: center;
+  margin: 25px 0 15px 0;
+}
+
+.action-btn {
+  background-color: #d85a70;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 16px;
   font-weight: bold;
+  transition: background-color 0.2s;
 }
 
-.feedback-success {
+.action-btn:hover:not(:disabled) {
+  background-color: #c24d62;
+}
+
+.action-btn:disabled {
+  background-color: #ecc5cb;
+  cursor: not-allowed;
+}
+
+.action-btn.secondary {
+  background-color: #ffffff;
+  color: #a6727a;
+  border: 2px solid #ffe3e8;
+}
+
+.action-btn.secondary:hover {
+  background-color: #fff0f2;
+}
+
+.quiz-results-box {
+  margin-top: 25px;
+  border: 2px solid #ffe3e8;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fffcfd;
+  text-align: center;
+}
+
+.score-display {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.score-num {
+  font-size: 32px;
+  color: #d85a70;
+}
+
+.feedback-box {
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.feedback-box.high {
   background-color: #e6f7ed;
   color: #1f8b4c;
-  padding: 10px;
-  border-radius: 6px;
 }
 
-.feedback-error {
+.feedback-box.mid {
+  background-color: #fff9e6;
+  color: #b38600;
+}
+
+.feedback-box.low {
   background-color: #fff0f2;
   color: #d85a70;
-  padding: 10px;
-  border-radius: 6px;
 }
 
 .main-footer {
